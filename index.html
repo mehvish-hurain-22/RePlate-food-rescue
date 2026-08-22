@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>RePlate — Real-Time Surplus Food Rescue Network</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --forest:#1B4332;
+    --mint:#52B788;
+    --gold:#D4AF37;
+    --slate:#0F2017;
+    --paper:#EFF5EE;
+    --paper-dim:#B9C9BE;
+    --glass-bg:rgba(27,67,50,0.4);
+    --glass-border:rgba(212,175,55,0.2);
+    --gold-glow:0 8px 32px rgba(212,175,55,0.15);
+    --radius-lg:22px;
+    --radius-md:14px;
+    --ff-display:'Fraunces', serif;
+    --ff-body:'Inter', sans-serif;
+    --ff-mono:'JetBrains Mono', monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{
+    overflow-x:hidden !important;
+    width:100% !important;
+    max-width:100vw !important;
+    margin:0;
+    padding:0;
+  }
+  html{scroll-behavior:smooth;}
+
+  body{
+    font-family:var(--ff-body);
+    color:var(--paper);
+    background:linear-gradient(135deg,#0F2017 0%, #1B4332 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  ::selection{background:var(--gold); color:var(--slate);}
+
+  a, button{font-family:inherit;}
+  button{cursor:pointer;}
+
+  :focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:3px;
+    border-radius:4px;
+  }
+
+  .container{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 clamp(20px, 5vw, 48px);
+  }
+
+  h1,h2,h3,h4{
+    font-family:var(--ff-display);
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+
+  .eyebrow{
+    font-family:var(--ff-mono);
+    font-size:12px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--gold);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px;height:7px;border-radius:50%;
+    background:var(--mint);
+    box-shadow:0 0 8px 2px rgba(82,183,136,0.7);
+    flex-shrink:0;
+  }
+
+  /* ---------- Glass Card ---------- */
+  .glass{
+    background:var(--glass-bg);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    border:1px solid var(--glass-border);
+    border-radius:var(--radius-lg);
+  }
+  .glass.gold-glow{box-shadow:var(--gold-glow);}
+
+  /* ---------- Navbar ---------- */
+  .navbar{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:rgba(15,32,23,0.72);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(212,175,55,0.18);
+  }
+  .nav-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px clamp(20px,5vw,48px);
+    max-width:1180px;
+    margin:0 auto;
+  }
+  .logo{
+    font-family:var(--ff-display);
+    font-weight:600;
+    font-size:22px;
+    letter-spacing:0.01em;
+    color:var(--paper);
+    text-shadow:0 0 18px rgba(212,175,55,0.45);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .logo em{
+    font-style:italic;
+    color:var(--gold);
+  }
+  .nav-links{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .nav-link{
+    background:transparent;
+    border:1px solid transparent;
+    color:var(--paper-dim);
+    font-size:14px;
+    font-weight:500;
+    padding:9px 16px;
+    border-radius:999px;
+    transition:all .25s ease;
+  }
+  .nav-link:hover{
+    color:var(--paper);
+    border-color:rgba(212,175,55,0.35);
+    background:rgba(212,175,55,0.08);
+  }
+  .nav-cta{
+    background:linear-gradient(135deg,var(--gold),#b8933f);
+    color:var(--slate);
+    font-weight:700;
+    padding:9px 18px;
+    border-radius:999px;
+    border:none;
+    font-size:14px;
+    box-shadow:0 4px 18px rgba(212,175,55,0.35);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .nav-cta:hover{transform:translateY(-1px); box-shadow:0 6px 22px rgba(212,175,55,0.5);}
+
+  .hamburger{
+    display:none;
+    width:40px;height:40px;
+    background:rgba(212,175,55,0.08);
+    border:1px solid rgba(212,175,55,0.25);
+    border-radius:10px;
+    position:relative;
+  }
+  .hamburger span{
+    position:absolute;
+    left:9px; right:9px;
+    height:2px;
+    background:var(--gold);
+    border-radius:2px;
+    transition:all .3s ease;
+  }
+  .hamburger span:nth-child(1){top:14px;}
+  .hamburger span:nth-child(2){top:19px;}
+  .hamburger span:nth-child(3){top:24px;}
+  .hamburger.open span:nth-child(1){transform:translateY(5px) rotate(45deg);}
+  .hamburger.open span:nth-child(2){opacity:0;}
+  .hamburger.open span:nth-child(3){transform:translateY(-5px) rotate(-45deg);}
+
+  .mobile-drawer{
+    display:none;
+    flex-direction:column;
+    gap:6px;
+    max-height:0;
+    overflow:hidden;
+    background:rgba(15,32,23,0.96);
+    border-top:1px solid rgba(212,175,55,0.15);
+    transition:max-height .35s ease;
+  }
+  .mobile-drawer.open{max-height:320px;}
+  .mobile-drawer button{
+    width:100%;
+    text-align:left;
+    background:transparent;
+    border:none;
+    border-bottom:1px solid rgba(212,175,55,0.08);
+    color:var(--paper-dim);
+    padding:16px clamp(20px,5vw,48px);
+    font-size:15px;
+    font-weight:500;
+  }
+  .mobile-drawer button:active{color:var(--gold);}
+
+  @media (max-width:860px){
+    .nav-links{display:none;}
+    .hamburger{display:block;}
+    .mobile-drawer{display:flex;}
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    padding:clamp(70px,14vh,140px) 0 clamp(60px,10vh,100px);
+    overflow:hidden;
+  }
+  .hero-rings{
+    position:absolute;
+    top:50%; right:-10%;
+    transform:translateY(-50%);
+    width:640px; height:640px;
+    pointer-events:none;
+    opacity:0.35;
+  }
+  .hero-rings .ring{
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    border:1px solid rgba(212,175,55,0.35);
+  }
+  .hero-rings .ring:nth-child(2){inset:60px; border-color:rgba(82,183,136,0.3);}
+  .hero-rings .ring:nth-child(3){inset:120px; border-color:rgba(212,175,55,0.25);}
+  .hero-rings .ring:nth-child(4){inset:180px; border-color:rgba(82,183,136,0.2);}
+
+  .hero-inner{
+    position:relative;
+    z-index:2;
+    max-width:680px;
+  }
+  .hero h1{
+    font-size:clamp(38px,6vw,64px);
+    font-weight:600;
+    line-height:1.06;
+    color:var(--paper);
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--gold);
+  }
+  .hero h2{
+    font-family:var(--ff-body);
+    font-weight:500;
+    font-size:clamp(16px,2.1vw,20px);
+    color:var(--paper-dim);
+    margin-top:18px;
+    max-width:480px;
+  }
+  .hero-actions{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-top:36px;
+  }
+  .btn{
+    border:none;
+    border-radius:999px;
+    padding:15px 26px;
+    font-weight:700;
+    font-size:15px;
+    letter-spacing:0.01em;
+    transition:transform .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .btn-primary{
+    background:linear-gradient(135deg,var(--gold),#b8933f);
+    color:var(--slate);
+    box-shadow:0 6px 24px rgba(212,175,55,0.35);
+  }
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 30px rgba(212,175,55,0.5);}
+  .btn-ghost{
+    background:rgba(255,255,255,0.04);
+    color:var(--paper);
+    border:1px solid rgba(212,175,55,0.3);
+  }
+  .btn-ghost:hover{background:rgba(212,175,55,0.1); transform:translateY(-2px);}
+
+  .hero-stats{
+    display:flex;
+    gap:clamp(24px,4vw,48px);
+    margin-top:56px;
+    flex-wrap:wrap;
+  }
+  .hero-stat .num{
+    font-family:var(--ff-mono);
+    font-size:26px;
+    font-weight:700;
+    color:var(--gold);
+  }
+  .hero-stat .label{
+    font-size:13px;
+    color:var(--paper-dim);
+    margin-top:2px;
+  }
+
+  /* ---------- Section shell ---------- */
+  section.block{
+    padding:clamp(60px,9vh,110px) 0;
+    position:relative;
+  }
+  .section-head{
+    max-width:620px;
+    margin-bottom:44px;
+  }
+  .section-head h3{
+    font-size:clamp(28px,3.6vw,40px);
+    font-weight:600;
+    margin-top:12px;
+    color:var(--paper);
+  }
+  .section-head p{
+    color:var(--paper-dim);
+    margin-top:12px;
+    font-size:15.5px;
+    max-width:520px;
+  }
+
+  /* ---------- Radar section ---------- */
+  .radar-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:32px;
+    align-items:stretch;
+  }
+  @media (max-width:900px){
+    .radar-grid{grid-template-columns:1fr;}
+  }
+
+  .radar-card{
+    padding:36px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:380px;
+  }
+  .radar-scope{
+    position:relative;
+    width:290px;
+    height:290px;
+  }
+  .radar-scope .ring{
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    border:1px solid rgba(212,175,55,0.35);
+    animation:radar-pulse 3.6s ease-in-out infinite;
+  }
+  .radar-scope .ring.r2{inset:38px; animation-delay:0.5s;}
+  .radar-scope .ring.r3{inset:76px; animation-delay:1s;}
+  .radar-scope .ring.r4{inset:114px; animation-delay:1.5s;}
+  .radar-scope .core{
+    position:absolute;
+    inset:132px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(212,175,55,0.5), rgba(15,32,23,0.1));
+  }
+  .radar-scope .sweep{
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    background:conic-gradient(from 0deg, rgba(82,183,136,0.55), rgba(82,183,136,0) 28%, transparent 100%);
+    animation:radar-spin 4s linear infinite;
+    mix-blend-mode:screen;
+  }
+  .radar-scope .crosshair::before,
+  .radar-scope .crosshair::after{
+    content:"";
+    position:absolute;
+    background:rgba(212,175,55,0.15);
+  }
+  .radar-scope .crosshair::before{top:50%; left:0; right:0; height:1px; transform:translateY(-50%);}
+  .radar-scope .crosshair::after{left:50%; top:0; bottom:0; width:1px; transform:translateX(-50%);}
+  .dispatch-dot{
+    position:absolute;
+    width:9px; height:9px;
+    border-radius:50%;
+    background:var(--mint);
+    box-shadow:0 0 10px 3px rgba(82,183,136,0.75);
+    animation:dot-blink 2.6s ease-in-out infinite;
+  }
+
+  @keyframes radar-spin{to{transform:rotate(360deg);}}
+  @keyframes radar-pulse{
+    0%,100%{opacity:0.25; transform:scale(0.96);}
+    50%{opacity:0.6; transform:scale(1);}
+  }
+  @keyframes dot-blink{
+    0%,100%{opacity:0.15; transform:scale(0.7);}
+    50%{opacity:1; transform:scale(1.15);}
+  }
+
+  .feed-card{
+    padding:0;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  .feed-head{
+    padding:24px 28px 18px;
+    border-bottom:1px solid rgba(212,175,55,0.12);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .feed-head h4{
+    font-family:var(--ff-body);
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--paper);
+  }
+  .live-pill{
+    font-family:var(--ff-mono);
+    font-size:11px;
+    color:var(--mint);
+    border:1px solid rgba(82,183,136,0.4);
+    padding:4px 10px;
+    border-radius:999px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .live-pill::before{
+    content:"";
+    width:6px;height:6px;border-radius:50%;
+    background:var(--mint);
+    animation:dot-blink 1.6s ease-in-out infinite;
+  }
+  .ticker-wrap{
+    flex:1;
+    display:flex;
+    align-items:center;
+    overflow:hidden;
+    position:relative;
+    -webkit-mask-image:linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+    mask-image:linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+  }
+  .ticker-track{
+    display:flex;
+    white-space:nowrap;
+    animation:ticker-scroll 26s linear infinite;
+  }
+  .ticker-track span{
+    font-family:var(--ff-mono);
+    font-size:13.5px;
+    color:var(--paper-dim);
+    padding:0 28px;
+    border-right:1px solid rgba(212,175,55,0.2);
+  }
+  .ticker-track span b{color:var(--gold); font-weight:600;}
+  @keyframes ticker-scroll{
+    from{transform:translateX(0);}
+    to{transform:translateX(-50%);}
+  }
+  .feed-foot{
+    padding:16px 28px;
+    display:flex;
+    gap:22px;
+    border-top:1px solid rgba(212,175,55,0.12);
+    flex-wrap:wrap;
+  }
+  .feed-foot div{font-size:12px; color:var(--paper-dim);}
+  .feed-foot b{display:block; font-family:var(--ff-mono); color:var(--gold); font-size:17px;}
+
+  /* ---------- Dispatch Desk ---------- */
+  .dispatch-grid{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:32px;
+    align-items:start;
+  }
+  @media (max-width:900px){
+    .dispatch-grid{grid-template-columns:1fr;}
+  }
+  .form-card{padding:36px;}
+  .field{
+    margin-bottom:20px;
+  }
+  .field label{
+    display:block;
+    font-size:12.5px;
+    font-weight:600;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--paper-dim);
+    margin-bottom:8px;
+  }
+  .field input,
+  .field select{
+    width:100%;
+    background:rgba(15,32,23,0.55);
+    border:1px solid rgba(212,175,55,0.22);
+    border-radius:var(--radius-md);
+    padding:13px 15px;
+    color:var(--paper);
+    font-size:15px;
+    font-family:var(--ff-body);
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .field input::placeholder{color:rgba(239,245,238,0.35);}
+  .field input:focus,
+  .field select:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(212,175,55,0.15);
+    outline:none;
+  }
+  .field select{
+    appearance:none;
+    background-image:linear-gradient(45deg, transparent 50%, var(--gold) 50%), linear-gradient(135deg, var(--gold) 50%, transparent 50%);
+    background-position:calc(100% - 20px) center, calc(100% - 15px) center;
+    background-size:5px 5px, 5px 5px;
+    background-repeat:no-repeat;
+  }
+  .submit-btn{
+    width:100%;
+    margin-top:6px;
+  }
+  .field-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  @media (max-width:520px){.field-row{grid-template-columns:1fr;}}
+
+  .stat-stack{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  .stat-card{
+    padding:26px 28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .stat-card:hover{transform:translateY(-3px);}
+  .stat-card .stat-label{
+    font-size:12.5px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--paper-dim);
+    margin-bottom:6px;
+  }
+  .stat-card .stat-value{
+    font-family:var(--ff-mono);
+    font-size:32px;
+    font-weight:700;
+    color:var(--paper);
+  }
+  .stat-card .stat-unit{
+    font-size:15px;
+    color:var(--gold);
+    margin-left:4px;
+    font-weight:500;
+  }
+  .stat-card .stat-delta{
+    font-family:var(--ff-mono);
+    font-size:12px;
+    color:var(--mint);
+    opacity:0;
+    transition:opacity .3s ease;
+    white-space:nowrap;
+  }
+  .stat-card .stat-delta.show{opacity:1;}
+  .stat-icon{
+    width:44px;height:44px;
+    border-radius:12px;
+    background:rgba(212,175,55,0.1);
+    border:1px solid rgba(212,175,55,0.25);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+
+  /* ---------- Partner Portal ---------- */
+  .tabs{
+    display:flex;
+    gap:6px;
+    padding:6px;
+    background:rgba(15,32,23,0.55);
+    border:1px solid rgba(212,175,55,0.18);
+    border-radius:999px;
+    width:fit-content;
+    margin-bottom:32px;
+    flex-wrap:wrap;
+  }
+  .tab-btn{
+    background:transparent;
+    border:none;
+    color:var(--paper-dim);
+    padding:11px 20px;
+    border-radius:999px;
+    font-size:14px;
+    font-weight:600;
+    transition:all .25s ease;
+  }
+  .tab-btn.active{
+    background:linear-gradient(135deg,var(--gold),#b8933f);
+    color:var(--slate);
+    box-shadow:0 4px 16px rgba(212,175,55,0.35);
+  }
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block; animation:fade-in .4s ease;}
+  @keyframes fade-in{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  .app-panel{
+    padding:44px;
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:40px;
+    align-items:center;
+  }
+  @media (max-width:760px){.app-panel{grid-template-columns:1fr; text-align:center; justify-items:center;}}
+  .store-badges{
+    display:flex;
+    gap:12px;
+    margin-top:22px;
+    flex-wrap:wrap;
+  }
+  .store-badge{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:rgba(15,32,23,0.6);
+    border:1px solid rgba(212,175,55,0.3);
+    border-radius:12px;
+    padding:10px 18px;
+    color:var(--paper);
+    font-size:13px;
+    transition:transform .2s ease, border-color .2s ease;
+  }
+  .store-badge:hover{transform:translateY(-2px); border-color:var(--gold);}
+  .store-badge small{display:block; color:var(--paper-dim); font-size:10px; text-transform:uppercase; letter-spacing:0.05em;}
+  .store-badge strong{font-family:var(--ff-display); font-size:15px;}
+  .qr-block{
+    width:150px;height:150px;
+    background:var(--paper);
+    border-radius:16px;
+    padding:12px;
+    flex-shrink:0;
+    box-shadow:var(--gold-glow);
+  }
+
+  .form-panel{padding:40px;}
+  .success-panel{
+    padding:48px;
+    text-align:center;
+  }
+  .success-icon{
+    width:64px;height:64px;
+    border-radius:50%;
+    background:rgba(82,183,136,0.15);
+    border:1px solid rgba(82,183,136,0.5);
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 20px;
+  }
+  .tracking-id{
+    font-family:var(--ff-mono);
+    font-size:20px;
+    color:var(--gold);
+    background:rgba(212,175,55,0.08);
+    border:1px solid rgba(212,175,55,0.3);
+    display:inline-block;
+    padding:10px 22px;
+    border-radius:999px;
+    margin:18px 0 28px;
+  }
+  .next-steps{
+    display:flex;
+    gap:18px;
+    justify-content:center;
+    flex-wrap:wrap;
+    text-align:left;
+    max-width:640px;
+    margin:0 auto;
+  }
+  .next-steps .step{
+    flex:1;
+    min-width:160px;
+    background:rgba(15,32,23,0.5);
+    border:1px solid rgba(212,175,55,0.18);
+    border-radius:14px;
+    padding:18px;
+  }
+  .next-steps .step .step-eyebrow{
+    font-family:var(--ff-mono);
+    font-size:11px;
+    color:var(--mint);
+    letter-spacing:0.06em;
+    margin-bottom:6px;
+  }
+  .next-steps .step p{font-size:13px; color:var(--paper-dim); margin:0;}
+
+  /* ---------- Footer ---------- */
+  footer{
+    padding:44px 0 34px;
+    border-top:1px solid rgba(212,175,55,0.15);
+    margin-top:40px;
+  }
+  .footer-inner{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .footer-links{
+    display:flex;
+    gap:22px;
+    flex-wrap:wrap;
+  }
+  .footer-links button{
+    background:none;
+    border:none;
+    color:var(--paper-dim);
+    font-size:13.5px;
+    padding:0;
+  }
+  .footer-links button:hover{color:var(--gold);}
+  .footer-copy{
+    font-size:12.5px;
+    color:rgba(185,201,190,0.6);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <div class="logo">Re<em>Plate</em></div>
+    <div class="nav-links">
+      <button class="nav-link" data-scroll="live-radar">Live Radar</button>
+      <button class="nav-link" data-scroll="dispatch-desk">Dispatch Desk</button>
+      <button class="nav-link" data-scroll="partner-portal">Partner Portal</button>
+      <button class="nav-cta" data-scroll="partner-portal">Register as Partner</button>
+    </div>
+    <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-drawer" id="mobileDrawer">
+    <button data-scroll="live-radar">Live Radar</button>
+    <button data-scroll="dispatch-desk">Dispatch Desk</button>
+    <button data-scroll="partner-portal">Partner Portal</button>
+    <button data-scroll="partner-portal">Register as Partner</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-rings" aria-hidden="true">
+    <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+  </div>
+  <div class="container hero-inner">
+    <div class="eyebrow">Surplus Food Rescue Network</div>
+    <h1>Too good to waste, <em>put it on the plate.</em></h1>
+    <h2>Save a meal, share the feel.</h2>
+    <div class="hero-actions">
+      <button class="btn btn-primary" data-scroll="partner-portal">Register as Partner</button>
+      <button class="btn btn-ghost" data-scroll="live-radar">View Live Radar</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">1,420</div><div class="label">Meals rescued</div></div>
+      <div class="hero-stat"><div class="num">850 kg</div><div class="label">Waste diverted</div></div>
+      <div class="hero-stat"><div class="num">310</div><div class="label">Logistics partners</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="live-radar">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Network Status</div>
+      <h3>Real-Time Activity Monitor</h3>
+      <p>Every rescue in motion across the RePlate network, tracked from pickup to plate.</p>
+    </div>
+    <div class="radar-grid">
+      <div class="glass radar-card">
+        <div class="radar-scope" id="radarScope">
+          <div class="ring"></div>
+          <div class="ring r2"></div>
+          <div class="ring r3"></div>
+          <div class="ring r4"></div>
+          <div class="sweep"></div>
+          <div class="crosshair"></div>
+          <div class="core"></div>
+        </div>
+      </div>
+      <div class="glass feed-card">
+        <div class="feed-head">
+          <h4>Live Dispatch Feed</h4>
+          <div class="live-pill">LIVE</div>
+        </div>
+        <div class="ticker-wrap">
+          <div class="ticker-track" id="tickerTrack"></div>
+        </div>
+        <div class="feed-foot">
+          <div><b>18</b>In transit now</div>
+          <div><b>6</b>Awaiting pickup</div>
+          <div><b>42</b>Delivered today</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="dispatch-desk">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Donor Console</div>
+      <h3>Post a Donation Request</h3>
+      <p>Log a batch of surplus food and the network routes it to the nearest verified partner.</p>
+    </div>
+    <div class="dispatch-grid">
+      <form class="glass form-card" id="dispatchForm">
+        <div class="field">
+          <label for="foodCategory">Food Category</label>
+          <input type="text" id="foodCategory" placeholder="Baked Goods, Hot Meals, Produce..." required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="batchQty">Batch Quantity (kg)</label>
+            <input type="number" id="batchQty" placeholder="e.g. 12" min="1" required>
+          </div>
+          <div class="field">
+            <label for="pickupWindow">Pickup Window</label>
+            <select id="pickupWindow" required>
+              <option value="">Select window</option>
+              <option>Next 30 Mins</option>
+              <option>Next 1 Hour</option>
+              <option>Next 2 Hours</option>
+              <option>Next 4 Hours</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="exactLocation">Exact Location</label>
+          <input type="text" id="exactLocation" placeholder="Street address or venue name" required>
+        </div>
+        <button type="submit" class="btn btn-primary submit-btn">Submit Rescue Request</button>
+      </form>
+
+      <div class="stat-stack">
+        <div class="glass gold-glow stat-card">
+          <div>
+            <div class="stat-label">Meals Rescued</div>
+            <div class="stat-value" id="statMeals">1,420</div>
+          </div>
+          <span class="stat-delta" id="deltaMeals"></span>
+        </div>
+        <div class="glass gold-glow stat-card">
+          <div>
+            <div class="stat-label">Waste Diverted</div>
+            <div class="stat-value" id="statWaste">850<span class="stat-unit">kg</span></div>
+          </div>
+          <span class="stat-delta" id="deltaWaste"></span>
+        </div>
+        <div class="glass gold-glow stat-card">
+          <div>
+            <div class="stat-label">Active Logistics Partners</div>
+            <div class="stat-value" id="statPartners">310</div>
+          </div>
+          <span class="stat-delta" id="deltaPartners"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="partner-portal">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Onboarding</div>
+      <h3>Join the RePlate Ecosystem</h3>
+      <p>Whichever way you rescue food, there's a lane built for how you operate.</p>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="tab-app">Mobile App Users</button>
+      <button class="tab-btn" data-tab="tab-ngo">NGOs &amp; Non-Profits</button>
+      <button class="tab-btn" data-tab="tab-community">Community Networks</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-app">
+      <div class="glass app-panel">
+        <div>
+          <div class="eyebrow">For volunteers &amp; casual donors</div>
+          <h4 style="font-size:26px; font-weight:600; margin-top:12px;">Rescue food from your pocket</h4>
+          <p style="color:var(--paper-dim); margin-top:10px; max-width:380px; font-size:14.5px;">Get pickup alerts, log drop-offs, and track your personal impact from the RePlate app.</p>
+          <div class="store-badges">
+            <div class="store-badge"><span>&#63743;</span><span><small>Download on the</small><strong>App Store</strong></span></div>
+            <div class="store-badge"><span>&#9654;</span><span><small>Get it on</small><strong>Google Play</strong></span></div>
+          </div>
+        </div>
+        <svg class="qr-block" viewBox="0 0 100 100" role="img" aria-label="Onboarding app QR code">
+          <rect width="100" height="100" fill="#EFF5EE"/>
+          <g fill="#0F2017">
+            <rect x="8" y="8" width="22" height="22"/><rect x="14" y="14" width="10" height="10" fill="#EFF5EE"/>
+            <rect x="70" y="8" width="22" height="22"/><rect x="76" y="14" width="10" height="10" fill="#EFF5EE"/>
+            <rect x="8" y="70" width="22" height="22"/><rect x="14" y="76" width="10" height="10" fill="#EFF5EE"/>
+            <rect x="38" y="8" width="6" height="6"/><rect x="50" y="8" width="6" height="6"/><rect x="38" y="20" width="6" height="6"/>
+            <rect x="60" y="38" width="6" height="6"/><rect x="70" y="38" width="6" height="6"/><rect x="80" y="44" width="6" height="6"/>
+            <rect x="38" y="38" width="6" height="6"/><rect x="44" y="50" width="6" height="6"/><rect x="38" y="60" width="6" height="6"/>
+            <rect x="50" y="60" width="6" height="6"/><rect x="60" y="68" width="6" height="6"/><rect x="70" y="76" width="6" height="6"/>
+            <rect x="80" y="66" width="6" height="6"/><rect x="50" y="80" width="6" height="6"/><rect x="60" y="86" width="6" height="6"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-ngo">
+      <div class="glass form-panel" id="ngoWrap">
+        <form id="ngoForm">
+          <div class="field-row">
+            <div class="field">
+              <label for="ngoName">Organization Official Name</label>
+              <input type="text" id="ngoName" placeholder="e.g. Hope Care Shelter" required>
+            </div>
+            <div class="field">
+              <label for="ngoTaxId">Government Tax ID / Registration Number</label>
+              <input type="text" id="ngoTaxId" placeholder="e.g. 47-2913855" required>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="ngoCapacity">Daily Meal Distribution Capacity</label>
+              <input type="number" id="ngoCapacity" placeholder="e.g. 500" min="1" required>
+            </div>
+            <div class="field">
+              <label for="ngoFocus">Food Focus Specialization</label>
+              <select id="ngoFocus" required>
+                <option value="">Select specialization</option>
+                <option>Shelters</option>
+                <option>Food Banks</option>
+                <option>Disaster Relief</option>
+                <option>Youth Centers</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary submit-btn">Submit Enterprise Registration</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-community">
+      <div class="glass form-panel" id="communityWrap">
+        <form id="communityForm">
+          <div class="field-row">
+            <div class="field">
+              <label for="commName">Community Group Association Name</label>
+              <input type="text" id="commName" placeholder="e.g. Riverside Neighbors Collective" required>
+            </div>
+            <div class="field">
+              <label for="commLead">Lead Coordinator Full Name</label>
+              <input type="text" id="commLead" placeholder="Full name" required>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="commSector">Regional Coverage Sector Area</label>
+              <input type="text" id="commSector" placeholder="e.g. North Riverside District" required>
+            </div>
+            <div class="field">
+              <label for="commVolunteers">Active Local Volunteer Count</label>
+              <input type="number" id="commVolunteers" placeholder="e.g. 25" min="1" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary submit-btn">Submit Community Registration</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container footer-inner">
+    <div class="footer-links">
+      <button data-scroll="top">Terms</button>
+      <button data-scroll="top">Privacy</button>
+      <button id="supportMailBtn">Support Mail</button>
+    </div>
+    <div class="footer-copy">&copy; 2026 RePlate Platform Network. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- Smooth scroll for every data-scroll trigger ---------- */
+  function scrollToId(id){
+    if(id === "top"){
+      window.scrollTo({top:0, behavior:"smooth"});
+      return;
+    }
+    var el = document.querySelector("#" + id);
+    if(el){ el.scrollIntoView({behavior:"smooth", block:"start"}); }
+  }
+
+  document.querySelectorAll("[data-scroll]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      scrollToId(btn.getAttribute("data-scroll"));
+      closeDrawer();
+    });
+  });
+
+  document.getElementById("supportMailBtn").addEventListener("click", function(){
+    window.location.href = "mailto:support@replate.network";
+  });
+
+  /* ---------- Mobile drawer ---------- */
+  var hamburger = document.getElementById("hamburgerBtn");
+  var drawer = document.getElementById("mobileDrawer");
+  function closeDrawer(){
+    drawer.classList.remove("open");
+    hamburger.classList.remove("open");
+    hamburger.setAttribute("aria-expanded", "false");
+  }
+  hamburger.addEventListener("click", function(){
+    var isOpen = drawer.classList.toggle("open");
+    hamburger.classList.toggle("open", isOpen);
+    hamburger.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  /* ---------- Radar dots ---------- */
+  var scope = document.getElementById("radarScope");
+  var dotCount = 5;
+  for(var i=0;i<dotCount;i++){
+    var dot = document.createElement("div");
+    dot.className = "dispatch-dot";
+    var angle = Math.random() * Math.PI * 2;
+    var radius = 40 + Math.random() * 90;
+    var cx = 145 + Math.cos(angle) * radius;
+    var cy = 145 + Math.sin(angle) * radius;
+    dot.style.left = cx + "px";
+    dot.style.top = cy + "px";
+    dot.style.animationDelay = (Math.random() * 2.4) + "s";
+    scope.appendChild(dot);
+  }
+
+  /* ---------- Live ticker ---------- */
+  var dispatches = [
+    "15kg gourmet surplus dispatched from Grand Plaza Hotel",
+    "Hope Care Shelter accepted delivery window 3 mins ago",
+    "University Dining Hall logged 40 portions of fresh meals",
+    "Harborview Bakery flagged 22kg of day-old bread",
+    "Community Fridge Eastside confirmed pickup complete",
+    "Riverside Catering Co. dispatched 60 hot meal trays",
+    "Second Harvest Depot verified 18kg produce donation",
+    "Downtown Market surplus batch en route to Youth Center"
+  ];
+  var track = document.getElementById("tickerTrack");
+  function buildTicker(){
+    var html = "";
+    dispatches.forEach(function(d){
+      html += "<span>&bull; <b>" + d.split(" ").slice(0,3).join(" ") + "</b> " + d.split(" ").slice(3).join(" ") + "</span>";
+    });
+    track.innerHTML = html + html; // duplicate for seamless loop
+  }
+  buildTicker();
+
+  /* ---------- Count-up helper ---------- */
+  function animateValue(el, from, to, suffixEl, duration){
+    var start = null;
+    function step(ts){
+      if(!start) start = ts;
+      var progress = Math.min((ts - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var val = Math.round(from + (to - from) * eased);
+      el.firstChild.nodeValue = val.toLocaleString();
+      if(progress < 1){ requestAnimationFrame(step); }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function flashDelta(el, text){
+    el.textContent = text;
+    el.classList.add("show");
+    clearTimeout(el._t);
+    el._t = setTimeout(function(){ el.classList.remove("show"); }, 2200);
+  }
+
+  /* ---------- Dispatch stats state ---------- */
+  var state = { meals: 1420, waste: 850, partners: 310 };
+  var statMeals = document.getElementById("statMeals");
+  var statWaste = document.getElementById("statWaste");
+  var statPartners = document.getElementById("statPartners");
+  var deltaMeals = document.getElementById("deltaMeals");
+  var deltaWaste = document.getElementById("deltaWaste");
+  var deltaPartners = document.getElementById("deltaPartners");
+
+  // ensure text nodes exist for animateValue targeting
+  function ensureTextNode(el){
+    if(el.firstChild && el.firstChild.nodeType === 3) return;
+    el.insertBefore(document.createTextNode(""), el.firstChild);
+  }
+  ensureTextNode(statMeals);
+  ensureTextNode(statWaste);
+  ensureTextNode(statPartners);
+
+  /* Initial count-up on load, from zero to seed values */
+  window.addEventListener("load", function(){
+    animateValue(statMeals, 0, state.meals, null, 1200);
+    animateValue(statWaste, 0, state.waste, null, 1200);
+    animateValue(statPartners, 0, state.partners, null, 1200);
+  });
+
+  /* ---------- Dispatch form submit ---------- */
+  var dispatchForm = document.getElementById("dispatchForm");
+  dispatchForm.addEventListener("submit", function(e){
+    e.preventDefault();
+
+    var mealsInc = 8 + Math.floor(Math.random() * 20);
+    var wasteInc = 2 + Math.floor(Math.random() * 8);
+    var partnersInc = Math.random() > 0.6 ? 1 : 0;
+
+    var fromMeals = state.meals, fromWaste = state.waste, fromPartners = state.partners;
+    state.meals += mealsInc;
+    state.waste += wasteInc;
+    state.partners += partnersInc;
+
+    animateValue(statMeals, fromMeals, state.meals, null, 900);
+    animateValue(statWaste, fromWaste, state.waste, null, 900);
+    if(partnersInc > 0){ animateValue(statPartners, fromPartners, state.partners, null, 900); }
+
+    flashDelta(deltaMeals, "+" + mealsInc);
+    flashDelta(deltaWaste, "+" + wasteInc + "kg");
+    if(partnersInc > 0){ flashDelta(deltaPartners, "+" + partnersInc); }
+
+    dispatchForm.reset();
+  });
+
+  /* ---------- Partner portal tabs ---------- */
+  var tabBtns = document.querySelectorAll(".tab-btn");
+  var panels = document.querySelectorAll(".tab-panel");
+  tabBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      tabBtns.forEach(function(b){ b.classList.remove("active"); });
+      panels.forEach(function(p){ p.classList.remove("active"); });
+      btn.classList.add("active");
+      document.getElementById(btn.getAttribute("data-tab")).classList.add("active");
+    });
+  });
+
+  /* ---------- Registration success screens ---------- */
+  function makeTrackingId(){
+    var digits = Math.floor(10000 + Math.random() * 89999);
+    return "#RPL-" + digits + "-2026";
+  }
+
+  function showSuccess(wrapEl, orgLabel){
+    var id = makeTrackingId();
+    wrapEl.innerHTML =
+      '<div class="success-panel">' +
+        '<div class="success-icon">&#10003;</div>' +
+        '<h4 style="font-size:24px; font-weight:600;">Onboarding Application Approved</h4>' +
+        '<p style="color:var(--paper-dim); margin-top:8px; font-size:14.5px;">' + orgLabel + ' is now in the RePlate integration queue.</p>' +
+        '<div class="tracking-id">ID: ' + id + '</div>' +
+        '<div class="next-steps">' +
+          '<div class="step"><div class="step-eyebrow">STEP 01</div><p>Credential Assignment &mdash; secure partner login issued within 24 hours.</p></div>' +
+          '<div class="step"><div class="step-eyebrow">STEP 02</div><p>Route Integration &mdash; your location is mapped into the dispatch network.</p></div>' +
+          '<div class="step"><div class="step-eyebrow">STEP 03</div><p>Verification Window &mdash; a coordinator confirms details within 48 hours.</p></div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  document.getElementById("ngoForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var name = document.getElementById("ngoName").value || "Your organization";
+    showSuccess(document.getElementById("ngoWrap"), name);
+  });
+
+  document.getElementById("communityForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var name = document.getElementById("commName").value || "Your community group";
+    showSuccess(document.getElementById("communityWrap"), name);
+  });
+
+})();
+</script>
+</body>
+</html>
