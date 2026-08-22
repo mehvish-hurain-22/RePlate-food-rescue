@@ -28,3 +28,6 @@ RePlate is a web-based platform designed to connect surplus food sources with or
 3. Navigate through the prototype.
 
 No backend or additional installation is required for the current prototype.
+
+##Prototype link
+https://mehvish-hurain-22.github.io/RePlate-food-rescue/
